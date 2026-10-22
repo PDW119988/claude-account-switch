@@ -162,8 +162,8 @@ namespace ClaudeAccountSwitch
                 return;
             }
             Refresh();
-            Balloon(L.T("'" + p.Name + "' 계정으로 전환했습니다. Claude Code 에서 새 대화를 여세요.",
-                        "Switched to '" + p.Name + "'. Start a new Claude Code conversation."));
+            Balloon(L.T("'" + p.Name + "' 계정으로 전환했습니다. /usage 로 확인할 수 있습니다.",
+                        "Switched to '" + p.Name + "'. Check with /usage."));
         }
 
         public void Balloon(string text)

@@ -106,6 +106,15 @@ namespace ClaudeAccountSwitch
             proc.StandardInput.Flush();
         }
 
+        public bool HasExited
+        {
+            get
+            {
+                try { return proc == null || proc.HasExited; }
+                catch (InvalidOperationException) { return true; }
+            }
+        }
+
         public bool Succeeded
         {
             get

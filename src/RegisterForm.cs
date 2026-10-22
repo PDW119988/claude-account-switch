@@ -119,8 +119,12 @@ namespace ClaudeAccountSwitch
             codeBox.Text = "";
             AcceptButton = finish;
             status.Text = L.T(
-                "브라우저에서 승인하면 화면에 코드가 나옵니다.\n그 코드를 복사해 아래 칸에 붙여넣고 [완료]를 누르세요.",
-                "Approve in the browser. A code will be shown.\nCopy it, paste it below and press [Finish].");
+                "브라우저에서 로그인하고 [승인]을 누르면 마지막 화면에 긴 코드가 나옵니다.\n" +
+                "그 코드를 복사해 아래 칸에 붙여넣고 [완료]를 누르세요.\n" +
+                "(이메일로 온 6자리 숫자는 여기가 아니라 브라우저 로그인 화면에 넣습니다)",
+                "Sign in and press [Approve] in the browser. The last page shows a long code.\n" +
+                "Copy it, paste it below and press [Finish].\n" +
+                "(A 6-digit code from e-mail goes on the browser sign-in page, not here)");
             codeBox.Focus();
         }
 
@@ -141,10 +145,36 @@ namespace ClaudeAccountSwitch
         void OnFinish(object sender, EventArgs e)
         {
             if (session == null) return;
+            string code = codeBox.Text.Trim();
+            // a short number is claude.ai's e-mail sign-in code, which belongs in the browser
+            if (System.Text.RegularExpressions.Regex.IsMatch(code, @"^\d{4,8}$"))
+            {
+                MessageBox.Show(this, L.T(
+                    "이 숫자는 claude.ai 이메일 로그인 확인 코드입니다.\n브라우저의 Claude 로그인 화면에 넣으세요.\n\n" +
+                    "로그인 후 [승인]을 누르면 마지막 화면에 긴 코드가 나옵니다. 그 코드를 여기에 넣으세요.",
+                    "That number is claude.ai's e-mail sign-in code.\nEnter it on the Claude sign-in page in your browser.\n\n" +
+                    "After signing in and approving, the last page shows a long code. Paste that one here."),
+                    Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                codeBox.SelectAll();
+                codeBox.Focus();
+                return;
+            }
             finish.Enabled = codeBox.Enabled = false;
             status.Text = L.T("확인 중…", "Verifying…");
-            try { session.SubmitCode(codeBox.Text); }
-            catch (Exception ex) { Fail(ex.Message); }
+            try { session.SubmitCode(code); }
+            catch (Exception ex) { Fail(ex.Message); return; }
+
+            // don't spin forever if claude never answers
+            var s = session;
+            var timer = new Timer { Interval = 45000 };
+            timer.Tick += delegate
+            {
+                timer.Stop();
+                timer.Dispose();
+                if (session == s && session != null && !s.HasExited)
+                    Fail(L.T("응답이 없습니다. 코드가 맞는지 확인하세요.", "No response. Check that the code is correct."));
+            };
+            timer.Start();
         }
 
         void OnUi(Action a)

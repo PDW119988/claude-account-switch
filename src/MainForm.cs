@@ -88,10 +88,10 @@ namespace ClaudeAccountSwitch
             {
                 AutoSize = true, ForeColor = SystemColors.GrayText, Margin = new Padding(0, 8, 0, 0), MaximumSize = new Size(520, 0),
                 Text = L.T(
-                    "전환한 뒤에는 Claude Code 에서 새 대화를 열어야 새 계정이 적용됩니다.\n" +
-                    "VSCode 는 Ctrl+Shift+P → Developer: Reload Window 를 실행하면 확실합니다.",
-                    "After switching, start a new Claude Code conversation to use the new account.\n" +
-                    "In VS Code, Ctrl+Shift+P → Developer: Reload Window is the sure way."),
+                    "전환하면 열려 있는 Claude Code 대화도 다음 요청부터 새 계정을 씁니다. (확인: /usage)\n" +
+                    "이전 계정으로 나오면 VSCode 에서 Ctrl+Shift+P → Developer: Reload Window.",
+                    "Open Claude Code conversations use the new account from their next request. (Check: /usage)\n" +
+                    "If it still shows the old one, in VS Code run Ctrl+Shift+P → Developer: Reload Window."),
             }, 0, 5);
 
             Controls.Add(t);

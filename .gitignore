@@ -1,0 +1,11 @@
+# build output (publish the exe through GitHub Releases, not the repo)
+build/
+dist/
+*.exe
+*.pdb
+
+# never commit sign-in data
+.credentials.json
+.claude.json
+profiles/
+backup/
